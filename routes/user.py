@@ -1,18 +1,18 @@
 from fastapi import APIRouter 
 from models.user import User
 from config.db import conn
-from schemas.user import userEntity ,usersEntity
+from schemas.user import serializeDict ,serializeList
 from bson import ObjectId
 
 user = APIRouter()
 
 @user.get('/')
 async def find_all_users():
-   return usersEntity(conn.proyectodb.users.find())
+   return serializeList(conn.proyectodb.users.find())
 
 @user.get('/{id}')
 async def find_one_user(id) :
-   return userEntity(conn.proyectodb.users.find_one({"_id":ObjectId(id)}))
+   return serializeDict(conn.proyectodb.users.find_one({"_id":ObjectId(id)}))
 
 @user.post('/')
 async def create_user(user : User):
@@ -22,15 +22,15 @@ async def create_user(user : User):
     
     # Buscar el documento único creado usando el ID
     usuario_encontrado = conn.proyectodb.users.find_one({"_id": id_insertado})
-    return userEntity(usuario_encontrado)
+    return serializeDict(usuario_encontrado)
 
 
 @user.put('/{id}')
 async def update_user(id,user:User):
    conn.proyectodb.users.find_one_and_update({"_id": ObjectId(id)} ,{"$set":dict(user)})
-   return userEntity(conn.proyectodb.users.find_one({"_id":ObjectId(id)})) 
+   return serializeDict(conn.proyectodb.users.find_one({"_id":ObjectId(id)})) 
   
 @user.delete('/{id}')
 async def delete_user(id,user:User):
    
-   return userEntity(conn.proyectodb.users.find_one_and_delete({"_id":ObjectId(id)})) 
+   return serializeDict(conn.proyectodb.users.find_one_and_delete({"_id":ObjectId(id)})) 
