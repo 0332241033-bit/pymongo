@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from models.user import User
 from config.db import conn
 from schemas.user import userEntity ,usersEntity
-from bson import objectId
+from bson import ObjectId
 
 user = APIRouter()
 
@@ -11,8 +11,8 @@ async def find_all_users():
    return usersEntity(conn.proyectodb.users.find())
 
 @user.get('/{id}')
-async def find_one_user(id,user :User) :
-   return userEntity(conn.proyectodb.users.find_one({"_id":objectId(id)}))
+async def find_one_user(id) :
+   return userEntity(conn.proyectodb.users.find_one({"_id":ObjectId(id)}))
 
 @user.post('/')
 async def create_user(user : User):
@@ -27,10 +27,10 @@ async def create_user(user : User):
 
 @user.put('/{id}')
 async def update_user(id,user:User):
-   conn.proyectodb.users.find_one_and_update({"_id": objectId(id)} ,{"$set":dict(user)})
-   return userEntity(conn.proyectodb.users.find_one({"_id":objectId(id)})) 
+   conn.proyectodb.users.find_one_and_update({"_id": ObjectId(id)} ,{"$set":dict(user)})
+   return userEntity(conn.proyectodb.users.find_one({"_id":ObjectId(id)})) 
   
 @user.delete('/{id}')
 async def delete_user(id,user:User):
    
-   return userEntity(conn.proyectodb.users.find_one_and_delete({"_id":objectId(id)})) 
+   return userEntity(conn.proyectodb.users.find_one_and_delete({"_id":ObjectId(id)})) 
